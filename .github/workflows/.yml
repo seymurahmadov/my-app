@@ -1,24 +1,47 @@
-stages:          # List of stages for jobs, and their order of execution
-  - docker-build
-  - deploy-staging
-  - deploy-prod
+name: CI Pipeline
 
-docker-build:       # This job runs in the build stage, which runs first.
-  stage: docker-build
-  script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
+on:
+  push:
+    branches:
+      - main   # yalnız main branch-ə push olanda işə düşəcək
 
-deploy-staging:   # This job runs in the test stage.
-  stage: deploy-staging    # It only starts when the job in the build stage completes successfully.
-  script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
+jobs:
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-deploy-prod:   # This job also runs in the test stage.
-  stage: deploy-prod  # It only runs when *both* jobs in the test stage complete successfully.
-  environment: production
-  script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+      - name: Build the code
+        run: |
+          echo "Compiling the code..."
+          echo "Compile complete."
+
+  deploy-staging:
+    name: Deploy Staging
+    runs-on: ubuntu-latest
+    needs: docker-build   # build tamam olandan sonra işə düşür
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run tests
+        run: |
+          echo "Running unit tests... This will take about 60 seconds."
+          sleep 60
+          echo "Code coverage is 90%"
+
+  deploy-prod:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging   # staging tamam olandan sonra işə düşür
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy Application
+        run: |
+          echo "Deploying application..."
+          echo "Application successfully deployed."
