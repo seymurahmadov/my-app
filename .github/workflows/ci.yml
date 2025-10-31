@@ -6,7 +6,7 @@ on:
       - main   # yalnız main branch-ə push olanda işə düşəcək
 
 jobs:
-  docker-build:
+  docker-build: 
     name: Docker Build
     runs-on: ubuntu-latest
     steps:
