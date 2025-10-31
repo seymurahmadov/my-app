@@ -36,7 +36,8 @@ jobs:
     name: Deploy Production
     runs-on: ubuntu-latest
     needs: deploy-staging   # staging tamam olandan sonra işə düşür
-    environment: production
+    environment:
+      name: production   # <-- bu, manual approval olan environment-dir
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
