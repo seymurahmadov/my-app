@@ -12,5 +12,6 @@ public class MyAppController {
     @GetMapping
     public ResponseEntity<String> getTest() {
         return ResponseEntity.ok("Hello World");
+
     }
 }
